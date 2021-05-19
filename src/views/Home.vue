@@ -19,7 +19,6 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import Card from "@/components/Card.vue";
 import Graphs from "@/components/Graphs.vue";
 import AddCard from "@/components/AddCard.vue";
@@ -55,7 +54,7 @@ export default {
           active: false,
         },
       ],
-      activeTiker: {}
+      activeTiker: {},
     };
   },
   methods: {
@@ -71,9 +70,9 @@ export default {
       return this.cryptoData.splice(id, 1);
     },
     setActive(tiker) {
-      this.activeTiker = tiker
-      tiker.active = !tiker.active
-    } 
+      this.activeTiker = tiker;
+      tiker.active = !tiker.active;
+    },
   },
 };
 </script>
