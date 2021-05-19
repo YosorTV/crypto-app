@@ -65,7 +65,7 @@ export default {
       this.$emit("onDelete");
     },
     onActive() {
-      this.$emit("onActive");
+      this.$emit("onActive", this.crypto);
     },
   },
 };

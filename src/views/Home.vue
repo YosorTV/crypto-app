@@ -9,11 +9,11 @@
           :crypto="data"
           :key="index"
           @onDelete="deleteTicker(index)"
-          @onActive="data.active = !data.active"
+          @onActive="setActive"
         />
       </dl>
       <hr class="w-full border-t border-gray-600 my-4" />
-      <graphs :graph="cryptoData[1]" />
+      <graphs :graph="activeTiker" />
     </div>
   </div>
 </template>
@@ -55,6 +55,7 @@ export default {
           active: false,
         },
       ],
+      activeTiker: {}
     };
   },
   methods: {
@@ -69,6 +70,10 @@ export default {
     deleteTicker(id) {
       return this.cryptoData.splice(id, 1);
     },
+    setActive(tiker) {
+      this.activeTiker = tiker
+      tiker.active = !tiker.active
+    } 
   },
 };
 </script>
