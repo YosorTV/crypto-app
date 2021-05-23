@@ -1,15 +1,17 @@
 <template>
   <section class="relative">
     <h3 class="text-lg leading-6 font-medium text-gray-900 my-8">
-      {{ graph.active ? graph.name : null }}
+      {{ graph.name }}
     </h3>
     <div class="flex items-end border-gray-600 border-b border-l h-64">
-      <div class="bg-purple-800 border w-10 h-24"></div>
-      <div class="bg-purple-800 border w-10 h-32"></div>
-      <div class="bg-purple-800 border w-10 h-48"></div>
-      <div class="bg-purple-800 border w-10 h-16"></div>
+      <div
+        v-for="(price, index) in currentGraph()"
+        :key="index"
+        :style="{ height: `${price}%` }"
+        class="bg-purple-800 border w-5"
+      ></div>
     </div>
-    <button type="button" class="absolute top-0 right-0">
+    <button type="button" class="absolute top-0 right-0" @click="onRemove">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -36,13 +38,34 @@
 </template>
 
 <script>
+/* eslint-disable prettier/prettier */
 export default {
   name: "Graphs",
   props: {
     graph: {
       type: Object,
       required: true,
-      default: () => "No data",
+      default() {
+        return "No data";
+      },
+    },
+    graphStatus: {
+      type: Array,
+      required: true,
+      default() {
+        return "No data";
+      },
+    },
+  },
+  methods: {
+    onRemove() {
+      this.$emit("onRemove");
+    },
+    
+    currentGraph() {
+      const max = Math.max(...this.graphStatus);
+      const min = Math.min(...this.graphStatus);
+      return this.graphStatus.map((price) => ((price - min) * 100) / (max - min));
     },
   },
 };

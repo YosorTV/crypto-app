@@ -2,23 +2,28 @@
   <div class="container mx-auto flex flex-col items-center bg-gray-100 p-4">
     <div class="container">
       <add-card @onAdd="addTicker" />
-      <hr class="w-full border-t border-gray-600 my-4" />
       <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
         <card
-          v-for="(data, index) in cryptoData"
-          :crypto="data"
-          :key="index"
-          @onDelete="deleteTicker(index)"
+          v-for="ticker in data"
+          :key="ticker.price"
+          :crypto="ticker"
+          :class="ticker.name === activeTiker.name ? 'border-4' : ''"
+          @onDelete="deleteTicker(ticker.price)"
           @onActive="setActive"
         />
       </dl>
-      <hr class="w-full border-t border-gray-600 my-4" />
-      <graphs :graph="activeTiker" />
+      <graphs
+        v-if="activeTiker.name"
+        :graph="activeTiker"
+        :graphStatus="graphs"
+        @onRemove="removeGraph"
+      />
     </div>
   </div>
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
 // @ is an alias to /src
 import Card from "@/components/Card.vue";
 import Graphs from "@/components/Graphs.vue";
@@ -33,47 +38,49 @@ export default {
   },
   data() {
     return {
-      cryptoData: [
-        {
-          name: "WTF - USD",
-          value: 1.11,
-          active: false,
-        },
-        {
-          name: "VUE - RUB",
-          value: 80000.0,
-          active: true,
-        },
-        {
-          name: "BTC - USD",
-          value: 99999.99,
-          active: false,
-        },
-        {
-          name: "DOGE - USD",
-          value: 0.0014,
-          active: false,
-        },
-      ],
-      activeTiker: {}
+      data: [],
+      graphs: [],
+      activeTiker: {
+        name: "",
+        price: "",
+      },
     };
   },
   methods: {
-    addTicker(tickerName) {
-      const newTicker = {
-        name: tickerName,
-        value: Math.floor(100 + Math.random() * (9999 + 1 - 10)),
-        active: false,
-      };
-      return this.cryptoData.unshift(newTicker);
+    ...mapActions("cryptoData", ["fetchCryptoPrice"]),
+    async addTicker(tickerName) {
+      const newTicker = { name: "", price: "" };
+      newTicker.name = tickerName;
+      await this.fetchCryptoPrice(newTicker);
+      const { USD } = this.cryptoPrice;
+      newTicker.price = USD;
+      this.data.push(newTicker);
+      if (this.activeTiker) {
+        setInterval(async () => this.graphs.push(USD), 3000);
+      } else {
+        clearInterval();
+        this.graphs = [];
+      }
     },
     deleteTicker(id) {
-      return this.cryptoData.splice(id, 1);
+      const card = this.data.findIndex((item) => item.id === id);
+      this.graphs = [];
+      return this.data.splice(card, 1);
+    },
+    removeGraph() {
+      this.activeTiker = {};
+      this.graphs = [];
     },
     setActive(tiker) {
-      this.activeTiker = tiker
-      tiker.active = !tiker.active
-    } 
+      this.graphs = [];
+      this.activeTiker = tiker;
+    },
+  },
+  computed: {
+    ...mapGetters("cryptoData", ["getCryptoPrice"]),
+    cryptoPrice() {
+      return this.getCryptoPrice;
+    },
   },
 };
 </script>

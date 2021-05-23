@@ -1,15 +1,20 @@
 <template>
   <div
-    :class="`bg-white overflow-hidden shadow rounded-lg cursor-pointer ${
-      crypto.active ? ' border-purple-800 border-solid border-4' : ''
-    }`"
+    class="
+      bg-white
+      overflow-hidden
+      shadow
+      rounded-lg
+      cursor-pointer
+      border-purple-800 border-solid
+    "
   >
     <div class="px-4 py-5 sm:p-6 text-center" @click="onActive">
       <dt class="text-sm font-medium text-gray-500 truncate">
         {{ crypto.name }}
       </dt>
       <dd class="mt-1 text-3xl font-semibold text-gray-900">
-        {{ crypto.value }}
+        {{ crypto.price }}
       </dd>
     </div>
     <div class="w-full border-t border-gray-200"></div>
