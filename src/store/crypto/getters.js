@@ -1,5 +1,8 @@
 export default {
-  getCryptoPrice({ cryptoPrice }) {
-    return cryptoPrice;
+  getCryptoPrice({ price }) {
+    return price;
+  },
+  getCryptoData({ data }) {
+    return data;
   },
 };

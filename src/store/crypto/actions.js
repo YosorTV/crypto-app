@@ -8,4 +8,9 @@ export default {
     commit("GET_CRYPTO_PRICE", data);
     return data
   },
+  async fetchCryptoData({ commit }) {
+    const { data:{ Data } } = await api.get(`blockchain/list?api_key=${key}`)
+    commit("GET_CRYPTO_DATA", Data);
+    return Data
+  }
 };

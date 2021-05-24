@@ -36,6 +36,9 @@ export default {
     Graphs,
     AddCard,
   },
+  async created() {
+    await this.fetchCrypto();
+  },
   data() {
     return {
       data: [],
@@ -47,7 +50,12 @@ export default {
     };
   },
   methods: {
-    ...mapActions("cryptoData", ["fetchCryptoPrice"]),
+    ...mapActions("cryptoData", ["fetchCryptoPrice", "fetchCryptoData"]),
+
+    async fetchCrypto() {
+      await this.fetchCryptoData();
+    },
+
     async addTicker(tickerName) {
       const newTicker = { name: "", price: "" };
       newTicker.name = tickerName;
@@ -56,7 +64,12 @@ export default {
       newTicker.price = USD;
       this.data.push(newTicker);
       if (this.activeTiker) {
-        setInterval(async () => this.graphs.push(USD), 3000);
+        setInterval(async () => {
+          await this.fetchCryptoPrice(newTicker);
+          const { USD } = this.cryptoPrice;
+          newTicker.price = USD;
+          this.graphs.push(USD);
+        }, 3000);
       } else {
         clearInterval();
         this.graphs = [];
@@ -77,9 +90,12 @@ export default {
     },
   },
   computed: {
-    ...mapGetters("cryptoData", ["getCryptoPrice"]),
+    ...mapGetters("cryptoData", ["getCryptoPrice", "getCryptoData"]),
     cryptoPrice() {
       return this.getCryptoPrice;
+    },
+    cryptoData() {
+      return this.getCryptoData;
     },
   },
 };
